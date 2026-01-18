@@ -49,32 +49,39 @@ java --enable-preview --add-modules=jdk.incubator.vector -jar target/benchmarks.
 java --enable-preview --add-modules=jdk.incubator.vector -jar target/benchmarks.jar -wi 2 -i 3 -f 1
 ```
 
-## Expected Results
+## Actual Benchmark Results
 
-### VectorMinMaxBenchmark (size=4096)
+### VectorMinMaxBenchmark (size=4096, Java 25 EA)
 
-| Benchmark | Throughput | Notes |
-|-----------|------------|-------|
-| minScalar | baseline | |
-| minVectorMethod | ~0.5x scalar | **BUG: should be faster** |
-| minCompareBlend | ~2-3x scalar | Workaround |
-| minCompareBlendUnrolled4 | ~3-4x scalar | Best performance |
+```
+Benchmark                                       (size)   Mode  Cnt  Score   Units
+VectorMinMaxBenchmark.maxCompareBlend             4096  thrpt    2  0.734  ops/us
+VectorMinMaxBenchmark.maxCompareBlendUnrolled4    4096  thrpt    2  1.917  ops/us
+VectorMinMaxBenchmark.maxScalar                   4096  thrpt    2  0.666  ops/us
+VectorMinMaxBenchmark.maxVectorMethod             4096  thrpt    2  0.070  ops/us  <-- BUG
+VectorMinMaxBenchmark.minCompareBlend             4096  thrpt    2  0.658  ops/us
+VectorMinMaxBenchmark.minCompareBlendUnrolled4    4096  thrpt    2  1.873  ops/us
+VectorMinMaxBenchmark.minLanewise                 4096  thrpt    2  0.070  ops/us  <-- BUG
+VectorMinMaxBenchmark.minScalar                   4096  thrpt    2  0.653  ops/us
+VectorMinMaxBenchmark.minVectorMethod             4096  thrpt    2  0.072  ops/us  <-- BUG
+```
 
-### VectorSumBenchmark (size=4096)
+| Benchmark | Throughput | vs Scalar | Notes |
+|-----------|------------|-----------|-------|
+| minScalar | 0.653 ops/us | baseline | |
+| **minVectorMethod** | 0.072 ops/us | **9x slower** | **BUG** |
+| **minLanewise** | 0.070 ops/us | **9x slower** | **BUG** |
+| minCompareBlend | 0.658 ops/us | ~same | Workaround |
+| minCompareBlendUnrolled4 | 1.873 ops/us | 2.9x faster | Best |
 
-| Benchmark | Throughput | Notes |
-|-----------|------------|-------|
-| sumLongScalar | baseline | |
-| sumLongVector | ~1.2x scalar | Basic SIMD |
-| sumLongVectorUnrolled4 | ~1.6x scalar | With unrolling |
-| sumDoubleScalar | baseline | |
-| sumDoubleVectorUnrolled4 | ~9x scalar | Significant speedup |
+The `.min()` and `.max()` methods are **9x slower than scalar code**!
 
 ## Test Environment
 
-- Java 25 EA (build 25-ea+5-356)
-- OS: Linux 6.8.0
+- Java 25 (build 25+37-LTS-jvmci-b01, GraalVM)
+- OS: Linux 6.8.0-90-generic x86_64
 - Vector API: jdk.incubator.vector (incubator module)
+- SPECIES_PREFERRED: LongVector[4] (256-bit AVX2)
 
 ## Benchmarks Included
 
