@@ -78,7 +78,7 @@ The `.min()` and `.max()` methods are **9x slower than scalar code**!
 
 ## Test Environment
 
-- Java 25 (build 25+37-LTS-jvmci-b01, GraalVM)
+- Java 25
 - OS: Linux 6.8.0-90-generic x86_64
 - Vector API: jdk.incubator.vector (incubator module)
 - SPECIES_PREFERRED: LongVector[4] (256-bit AVX2)
