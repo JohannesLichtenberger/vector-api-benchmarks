@@ -51,7 +51,7 @@ java --enable-preview --add-modules=jdk.incubator.vector -jar target/benchmarks.
 
 ## Actual Benchmark Results
 
-### VectorMinMaxBenchmark (size=4096, Java 25 EA)
+### VectorMinMaxBenchmark (size=4096, Java 25)
 
 ```
 Benchmark                                       (size)   Mode  Cnt  Score   Units
@@ -115,7 +115,7 @@ The `min()` method is 5-10x slower than the compare+blend pattern in JMH benchma
 3. Run: `java --enable-preview --add-modules=jdk.incubator.vector -jar target/benchmarks.jar VectorMinMaxBenchmark`
 
 ### Environment
-- Java version: 25-ea+5-356
+- Java version: 25
 - OS: Linux x86_64
 - CPU: (varies)
 
